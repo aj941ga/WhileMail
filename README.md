@@ -1,6 +1,6 @@
 # WhileMail
 
-A fullstack serverless application for sending recurring mails. Uses Amazon API Gateway, EventBridge, Lambdas, Simple Email Service, DynamoDB, S3, CloudFront and Amplify.
+A fullstack serverless application for sending recurring emails. Uses Amazon API Gateway, EventBridge, Lambdas, Simple Email Service, DynamoDB, S3, CloudFront and Amplify.
 
 ## High level Architecture of WhileMail
 
