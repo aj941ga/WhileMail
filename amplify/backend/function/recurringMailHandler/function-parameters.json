@@ -1,0 +1,31 @@
+{
+  "lambdaLayers": [],
+  "permissions": {
+    "function": {
+      "scheduleHandler": [
+        "create",
+        "read",
+        "update",
+        "delete"
+      ]
+    },
+    "storage": {
+      "mailsTable": [
+        "create",
+        "read",
+        "update",
+        "delete"
+      ]
+    }
+  },
+  "environmentVariableList": [
+    {
+      "cloudFormationParameterName": "accountId",
+      "environmentVariableName": "ACCOUNT_ID"
+    },
+    {
+      "cloudFormationParameterName": "tablename",
+      "environmentVariableName": "TABLENAME"
+    }
+  ]
+}

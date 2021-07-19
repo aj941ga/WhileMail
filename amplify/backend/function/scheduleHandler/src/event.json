@@ -1,0 +1,4 @@
+{
+  "ruleName": "id_of_mail_from_dynamoDB",
+  "from": "email_of_sender_from_dynamo_db"
+}

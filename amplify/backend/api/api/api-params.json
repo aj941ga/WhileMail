@@ -1,0 +1,42 @@
+{
+  "paths": [
+    {
+      "name": "/mails",
+      "lambdaFunction": "recurringMailHandler",
+      "privacy": {
+        "private": true,
+        "auth": [
+          "/POST",
+          "/GET",
+          "/PUT",
+          "/PATCH",
+          "/DELETE"
+        ]
+      },
+      "policyResourceName": "/mails"
+    }
+  ],
+  "resourceName": "api",
+  "apiName": "api",
+  "functionArns": [
+    {
+      "lambdaFunction": "recurringMailHandler"
+    }
+  ],
+  "privacy": {
+    "auth": 1,
+    "unauth": 0,
+    "authRoleName": "amplify-authcra-devq-34418-authRole",
+    "unAuthRoleName": "amplify-authcra-devq-34418-unauthRole"
+  },
+  "dependsOn": [
+    {
+      "category": "function",
+      "resourceName": "recurringMailHandler",
+      "attributes": [
+        "Name",
+        "Arn"
+      ]
+    }
+  ]
+}

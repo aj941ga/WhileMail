@@ -1,0 +1,7 @@
+{
+    "tableName": "Mails",
+    "partitionKeyName": "id",
+    "partitionKeyType": "S",
+    "sortKeyName": "from",
+    "sortKeyType": "S"
+}

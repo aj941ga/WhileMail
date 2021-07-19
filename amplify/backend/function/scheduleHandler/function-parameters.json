@@ -1,0 +1,20 @@
+{
+  "permissions": {
+    "storage": {
+      "mailsTable": [
+        "read"
+      ]
+    }
+  },
+  "lambdaLayers": [],
+  "environmentVariableList": [
+    {
+      "cloudFormationParameterName": "sourceEmail",
+      "environmentVariableName": "SOURCE_EMAIL"
+    },
+    {
+      "cloudFormationParameterName": "tablename",
+      "environmentVariableName": "TABLENAME"
+    }
+  ]
+}
