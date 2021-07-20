@@ -84,30 +84,12 @@ function MailsList({ currmail, onDelete }) {
             </IconButton>
           }
           titleTypographyProps={{ variant: "h6" }}
-          // title={
-          //   <Chip
-          //     color="secondary"
-          //     label={mail.schedule.scheduled}
-          //     size="small"
-          //   ></Chip>
-          // }
-          // subheader={
-          //   (mail.scheduledDate && (
-          //     <>
-          //       Sent On{" "}
-          //       <Chip
-          //         color="secondary"
-          //         label={
-          //           mail.scheduledDate.toString().split("T")[0] +
-          //           " at " +
-          //           mail.scheduledDate.toString().split("T")[1].substring(0, 8)
-          //         }
-          //         size="small"
-          //       ></Chip>
-          //     </>
-          //   )) ||
-          //   (!mail.scheduledDate && <ScheduleDate schedule={mail.schedule} />)
-          // }
+          title={
+            <Chip color="secondary" label={mail.recur} size="small"></Chip>
+          }
+          subheader={
+            <ScheduleDate cron={mail.cronExpression} recur={mail.recur} />
+          }
         />
         <CardContent>
           <Typography variant="body2" color="textSecondary" component="div">
@@ -128,12 +110,12 @@ function MailsList({ currmail, onDelete }) {
                 <Grid item>Subject :</Grid>
                 <Grid item>{mail.subject}</Grid>
               </Grid>
-              {/* <Grid item container direction="row">
+              <Grid item container direction="row">
                 <Grid item>Body :</Grid>
                 <Grid item>
                   <div dangerouslySetInnerHTML={createMarkup(mail.body)}></div>
                 </Grid>
-              </Grid> */}
+              </Grid>
             </Grid>
           </Typography>
         </CardContent>
@@ -145,12 +127,9 @@ function MailsList({ currmail, onDelete }) {
             keepMounted
             onClose={handleClose}
           >
-            {/* {!mail.scheduledDate && (
-              <MenuItem onClick={handleClose}>
-                <Link to={`mailForm/${mail.id}`}>update</Link>
-              </MenuItem>
-            )} */}
-
+            <MenuItem onClick={handleClose}>
+              <Link to={`mailForm/${mail.id}`}>update</Link>
+            </MenuItem>
             <MenuItem onClick={() => onDelete(mail.id)}>Delete</MenuItem>
           </Menu>
         </CardActions>
@@ -159,8 +138,14 @@ function MailsList({ currmail, onDelete }) {
   );
 }
 
-function ScheduleDate({ schedule }) {
-  const { hour, minute, month, monthDay, weekDay, scheduled } = schedule;
+function ScheduleDate({ cron, recur: scheduled }) {
+  const cronAttributes = cron.toString().split(" ");
+  const minute = cronAttributes[0];
+  const hour = cronAttributes[1];
+  const day = cronAttributes[2];
+  const month = cronAttributes[3];
+  const weekDay = cronAttributes[4];
+  const year = cronAttributes[5];
   const weekDays = [
     "Sunday",
     "Monday",
@@ -173,8 +158,19 @@ function ScheduleDate({ schedule }) {
 
   return (
     <>
-      {scheduled === "recurring" && (
-        <Chip color="secondary" label={`every 20s`} size="small" />
+      {scheduled === "hourly" && (
+        <Chip
+          color="secondary"
+          label={`every hour at ${minute} minute`}
+          size="small"
+        />
+      )}
+      {scheduled === "daily" && (
+        <Chip
+          color="secondary"
+          label={`every day at ${hour}:${minute}`}
+          size="small"
+        />
       )}
       {scheduled === "weekly" && (
         <Chip
@@ -186,18 +182,21 @@ function ScheduleDate({ schedule }) {
       {scheduled === "monthly" && (
         <Chip
           color="secondary"
-          label={`${monthDay} of every month at ${hour}:${minute}`}
+          label={`${day} of every month at ${hour}:${minute}`}
           size="small"
         />
       )}
       {scheduled === "yearly" && (
         <Chip
           color="secondary"
-          label={`every ${monthDay} of ${
+          label={`every ${day} of ${
             monthAndDays[month - 1].month
           } at ${hour}:${minute}`}
           size="small"
         />
+      )}
+      {scheduled === "custom" && (
+        <Chip color="secondary" label={cron} size="small" />
       )}
     </>
   );
@@ -211,7 +210,7 @@ function MailChips({ emails }) {
       key={m}
       size="small"
       label={m}
-      style={{ marginLeft: 5 }}
+      style={{ margin: 5 }}
     />
   ));
 }

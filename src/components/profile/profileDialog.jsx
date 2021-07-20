@@ -26,6 +26,7 @@ import Fab from "@material-ui/core/Fab";
 import LockIcon from "@material-ui/icons/Lock";
 import SaveIcon from "@material-ui/icons/Save";
 import { updateUser, getLoggedUser } from "../../services/userService";
+import authService from "../../services/authService";
 
 const useStyles = makeStyles((theme) => ({
   root: {
@@ -57,12 +58,7 @@ function ProfileList({ user, setUser }) {
   const [name, setName] = React.useState(null);
 
   useEffect(() => {
-    async function loadUser() {
-      // TODO fetch data from jwt
-      const data = "";
-      setUser(data);
-    }
-    loadUser();
+    setUser(authService.getCurrentUserFromStorage());
   }, []);
 
   //   const currentName = watch('name');
@@ -95,7 +91,10 @@ function ProfileList({ user, setUser }) {
                     <PersonIcon />
                   </Avatar>
                 </ListItemAvatar>
-                <ListItemText primary="Name" secondary={user.name} />
+                <ListItemText
+                  primary="Username"
+                  secondary={user["cognito:username"]}
+                />
               </>
             )}
             {nameEdit && (

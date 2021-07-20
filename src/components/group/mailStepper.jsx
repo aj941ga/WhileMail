@@ -59,6 +59,38 @@ const initialMailForm = {
   subject: "",
   body: "",
   cronExpression: "",
+  recur: "daily",
+  minute: "*",
+  hour: "*",
+  day: "*",
+  month: "*",
+  weekDay: "*",
+  year: "*",
+};
+
+const generateArray = (from, to) => {
+  let ar = [];
+  if (to < from) return ar;
+  for (let i = from; i <= to; i++) {
+    ar.push(i);
+  }
+  return ar;
+};
+
+const cronAttributeLists = {
+  minuteList: generateArray(0, 59),
+  hourList: generateArray(0, 23),
+  dayList: generateArray(1, 31),
+  monthList: generateArray(1, 12),
+  weekDayList: generateArray(1, 7),
+};
+const recurList = {
+  hourly: ["minute"],
+  daily: ["minute", "hour"],
+  weekly: ["minute", "hour", "weekDay"],
+  monthly: ["minute", "hour", "day"],
+  yearly: ["minute", "hour", "day", "month"],
+  custom: ['cronExpression']
 };
 
 export default function MailStepper(props) {
@@ -76,6 +108,13 @@ export default function MailStepper(props) {
       const MailId = props.match.params.id;
       if (MailId === "new") return;
       const { data: mail } = await getMail(MailId);
+      const attributesArray = mail.cronExpression.toString().split(' ');
+      mail.minute = attributesArray[ 0 ];
+      mail.hour = attributesArray[ 1 ];
+      mail.day = attributesArray[ 2 ];
+      mail.month = attributesArray[ 3 ];
+      mail.weekDay = attributesArray[ 4 ];
+      mail.year = attributesArray[ 5 ];
       setMailForm(mail);
     } catch (ex) {
       if (ex.response && ex.response.status === 404)
@@ -99,8 +138,15 @@ export default function MailStepper(props) {
   const onSubmit = async () => {
     const id = props.match.params.id;
 
-    const { to, cc, bcc, body, subject, cronExpression } = mailForm;
-    let data = { to, cc, bcc, body, subject, cronExpression };
+    let { to, cc, bcc, body, subject, cronExpression, recur,
+       minute, hour, day, month, weekDay, year  } = mailForm;
+
+    if(recur !== 'custom'){
+
+      cronExpression = `${minute} ${hour} ${day} ${month} ${weekDay} ${year}`;
+    }
+
+    let data = { to, cc, bcc, body, subject, cronExpression, recur };
     console.log(data);
     // data.to = data.to.trim();
     data.to = toArray(data.to);
@@ -130,10 +176,9 @@ export default function MailStepper(props) {
   }
 
   const handleNext = (activeStep, steps) => {
-    if(activeStep === steps.length - 1){
+    if (activeStep === steps.length - 1) {
       onSubmit();
-    } 
-    else setActiveStep((prevActiveStep) => prevActiveStep + 1);
+    } else setActiveStep((prevActiveStep) => prevActiveStep + 1);
   };
 
   const handleBack = () => {
@@ -188,12 +233,12 @@ export default function MailStepper(props) {
               >
                 Back
               </Button>
-              <Button variant="contained" color="primary" onClick={() => handleNext(activeStep, steps)}>
-                {activeStep === steps.length - 1 ? (
-                 "Send Mail"
-                ) : (
-                  "Next"
-                )}
+              <Button
+                variant="contained"
+                color="primary"
+                onClick={() => handleNext(activeStep, steps)}
+              >
+                {activeStep === steps.length - 1 ? "Send Mail" : "Next"}
               </Button>
             </div>
           </div>
@@ -203,23 +248,162 @@ export default function MailStepper(props) {
   );
 }
 
-function ScheduleForm({ mailForm, setMailForm, onChange, readonly }) {
+function ScheduleForm({ mailForm, onChange, readonly }) {
+  const { minute, hour, day, month, weekDay } = mailForm;
+  const { minuteList, hourList, dayList, monthList, weekDayList } =
+    cronAttributeLists;
+    
   return (
     <Container>
-      <TextField
-        id="cronExpression"
-        name="cronExpression"
-        label="cron expression :"
-        value={mailForm.value}
+      <Grid
+        container
+        direction="row"
+        justifyContent="space-around"
+        alignItems="center"
+      >
+        <Grid item>
+          <CustomSelect
+            label="recur"
+            onChange={onChange}
+            value={mailForm.recur}
+            list={["hourly", "daily", "weekly", "monthly", "yearly", "custom"]}
+            readonly={readonly}
+            helperText={"NOTE: it follows UTC time"}
+          />
+        </Grid>
+        {recurList[mailForm.recur].includes("cronExpression") && (
+          <Grid item>
+            <TextField
+              id="cronExpression"
+              name="cronExpression"
+              label="cron expression :"
+              value={mailForm.cronExpression}
+              onChange={onChange}
+              fullWidth
+              helperText={"enter amazon cron expression"}
+              variant="outlined"
+              InputProps={{
+                readOnly: readonly,
+              }}
+            />
+          </Grid>
+        )}
+        {recurList[mailForm.recur].includes("minute") && (
+          <Grid item>
+            <CustomSelect
+              label="minute"
+              onChange={onChange}
+              value={minute}
+              list={minuteList}
+              readonly={readonly}
+            />
+          </Grid>
+        )}
+        {recurList[mailForm.recur].includes("hour") && (
+          <Grid item>
+            <CustomSelect
+              label="hour"
+              onChange={onChange}
+              value={hour}
+              list={hourList}
+              readonly={readonly}
+            />{" "}
+          </Grid>
+        )}
+        {recurList[mailForm.recur].includes("day") && (
+          <Grid item>
+            <CustomSelect
+              label="day"
+              onChange={onChange}
+              value={day}
+              list={dayList}
+              readonly={readonly}
+            />{" "}
+          </Grid>
+        )}
+        {recurList[mailForm.recur].includes("month") && (
+          <Grid item>
+            <CustomSelect
+              label="month"
+              onChange={onChange}
+              value={month}
+              list={monthList}
+              readonly={readonly}
+            />{" "}
+          </Grid>
+        )}
+        {recurList[mailForm.recur].includes("weekDay") && (
+          <Grid item>
+            <CustomSelect
+              label="weekDay"
+              onChange={onChange}
+              value={weekDay}
+              list={weekDayList}
+              readonly={readonly}
+            />{" "}
+          </Grid>
+        )}
+      </Grid>
+    </Container>
+  );
+}
+
+function CustomSelect({ label, onChange, value, list, readonly }) {
+
+  return (
+    // <FormControl className={classes.formControl}>
+    //   <InputLabel id="demo-mutiple-chip-label">Chip</InputLabel>
+    //   <Select
+    //     labelId="demo-mutiple-chip-label"
+    //     id="demo-mutiple-chip"
+    //     multiple
+    //     value={personName}
+    //     onChange={onChange}
+    //     input={<Input id="select-multiple-chip" />}
+    //     renderValue={(selected) => (
+    //       <div className={classes.chips}>
+    //         {selected.map((value) => (
+    //           <Chip key={value} label={value} className={classes.chip} />
+    //         ))}
+    //       </div>
+    //     )}
+    //     MenuProps={MenuProps}
+    //   >
+    //     {list.map((name) => (
+    //       <MenuItem
+    //         key={name}
+    //         value={name}
+    //         style={getStyles(name, personName, theme)}
+    //       >
+    //         {name}
+    //       </MenuItem>
+    //     ))}
+    //   </Select>
+    // </FormControl>
+    <FormControl>
+      <InputLabel id={label}>{label}</InputLabel>
+      <Select
+        labelId={label}
+        id={label}
+        value={value}
+        name={label}
+        // inputRef={refScheduled}
         onChange={onChange}
-        fullWidth
-        helperText={"enter amazon cron expression"}
-        variant="outlined"
+        style={{ width: 130, marginRight: 20, marginTop: 20 }}
+        // error={errors.scheduled && 1}
+        required="true"
         InputProps={{
           readOnly: readonly,
         }}
-      />
-    </Container>
+      >
+        {list.map((d) => (
+          <MenuItem value={d}>{d}</MenuItem>
+        ))}
+      </Select>
+      <FormHelperText>
+        {/* {errors.scheduled && errors.scheduled.message} */}
+      </FormHelperText>
+    </FormControl>
   );
 }
 
@@ -426,21 +610,6 @@ function ReviewForm({ mailForm, setMailForm, onChange }) {
 //           </Grid>
 //           <Grid item>
 //             <Grid container direction="row" spacing={2}>
-//               <FormControl>
-//                 <InputLabel id="demo-simple-select-label">Schedule</InputLabel>
-//                 <Select
-//                   labelId="demo-simple-select-label"
-//                   id="demo-simple-select"
-//                   value={scheduled}
-//                   onChange={(event) => setSchedule(event.target.value)}
-//                   style={{ width: 150, marginRight: 20 }}
-//                   required="true"
-//                 >
-//                   {schedules.map((s) => (
-//                     <MenuItem value={s}>{s}</MenuItem>
-//                   ))}
-//                 </Select>
-//               </FormControl>
 
 //               {scheduled && scheduled === "yearly" && (
 //                 <>
@@ -482,26 +651,7 @@ function ReviewForm({ mailForm, setMailForm, onChange }) {
 //                 </>
 //               )}
 //               {scheduled && scheduled === "monthly" && (
-//                 <FormControl>
-//                   <InputLabel id="monthDay">Day of month</InputLabel>
-//                   <Select
-//                     labelId="monthDay"
-//                     id="monthDay"
-//                     value={monthDay}
-//                     // inputRef={refScheduled}
-//                     onChange={(event) => setMonthDay(event.target.value)}
-//                     style={{ width: 130, marginRight: 20 }}
-//                     // error={errors.scheduled && 1}
-//                     required="true"
-//                   >
-//                     {monthDays.map((d) => (
-//                       <MenuItem value={d}>{d}</MenuItem>
-//                     ))}
-//                   </Select>
-//                   <FormHelperText>
-//                     {/* {errors.scheduled && errors.scheduled.message} */}
-//                   </FormHelperText>
-//                 </FormControl>
+
 //               )}
 
 //               {scheduled && scheduled === "weekly" && (

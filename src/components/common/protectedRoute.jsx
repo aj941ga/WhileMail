@@ -1,7 +1,7 @@
 import React, { useRef } from "react";
 import { Route, Redirect } from "react-router-dom";
 import { Auth, Hub } from "aws-amplify";
-import jwt_decode from "jwt-decode";
+import authService from "../../services/authService";
 
 const ProtectedRoute = ({
   path,
@@ -11,25 +11,11 @@ const ProtectedRoute = ({
   user,
   ...rest
 }) => {
-  const isAuthenticated = () => {
-    // check token for expiry
-    for (let key in localStorage) {
-      if (key.includes("idToken")) {
-        let { exp } = jwt_decode(localStorage[key]);
-        if (Date.now() >= exp * 1000) {
-          return false;
-        }
-        return true;
-      }
-    }
-    return false;
-  };
-
   return (
     <Route
       {...rest}
       render={(props) => {
-        if (!isAuthenticated()) {
+        if (!authService.getCurrentUserFromStorage()) {
           return (
             <Redirect
               to={{
