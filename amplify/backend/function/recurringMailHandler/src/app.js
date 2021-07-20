@@ -73,9 +73,9 @@ app.get('/mails', async function (req, res) {
 
 app.post('/mails', validate(validateMail), async function (req, res) {
   // Add your code here
-  const { to, cc, subject, body, cronExpression } = req.body;
+  const { to, cc, subject, body, cronExpression, recur } = req.body;
   try {
-    let mail = new Mail({ id: uuidv4(), from: req.user.email, to, cc, subject, body, cronExpression });
+    let mail = new Mail({ id: uuidv4(), from: req.user.email, to, cc, subject, body, cronExpression, recur });
     mail = await mail.save();
 
     const schedule = `cron(${cronExpression})`;
@@ -94,10 +94,10 @@ app.post('/mails', validate(validateMail), async function (req, res) {
 app.put('/mails/:id', validate(validateMail), async function (req, res) {
   // Add your code here
   const id = req.params.id;
-  const { to, cc, subject, body, cronExpression } = req.body;
+  const { to, cc, subject, body, cronExpression, recur } = req.body;
 
   try {
-    const mail = await Mail.update({ id, from: req.user.email }, { to, cc, subject, body, cronExpression });
+    const mail = await Mail.update({ id, from: req.user.email }, { to, cc, subject, body, cronExpression, recur });
     if (!mail) return res.status(404).send('mail with given id not found');
 
     const schedule = `cron(${cronExpression})`;

@@ -5,7 +5,10 @@ A fullstack serverless application for sending recurring mails. Uses Amazon API 
 ## High level Architecture of WhileMail
 
 ![WhileMail AWS High Level architecture](public/images/whilemail-aws-architecture.png)
-[View Demo](https://master.d2ka7y7551sk8n.amplifyapp.com/)
+
+## mobile view
+
+![WhileMail mobile view](public/images/whilemail-mobile-view.png)
 
 ## Deploy with the AWS Amplify Console
 

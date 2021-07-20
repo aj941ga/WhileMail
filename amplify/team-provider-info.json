@@ -18,13 +18,13 @@
       "function": {
         "recurringMailHandler": {
           "deploymentBucketName": "amplify-authcra-devq-34418-deployment",
-          "s3Key": "amplify-builds/recurringMailHandler-6464426e613166756e66-build.zip",
+          "s3Key": "amplify-builds/recurringMailHandler-70644e58365054685662-build.zip",
           "accountId": "449360647147",
           "tablename": "mailsTable"
         },
         "scheduleHandler": {
           "deploymentBucketName": "amplify-authcra-devq-34418-deployment",
-          "s3Key": "amplify-builds/scheduleHandler-44554b5a37304635484f-build.zip",
+          "s3Key": "amplify-builds/scheduleHandler-77423849576e4f464737-build.zip",
           "sourceEmail": "aj941ga@gmail.com",
           "tablename": "mailsTable"
         }

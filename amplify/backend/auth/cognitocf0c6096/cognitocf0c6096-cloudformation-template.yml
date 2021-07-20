@@ -205,17 +205,20 @@ Resources:
     Properties:
       UserPoolName: !If [ShouldNotCreateEnvResources, !Ref userPoolName, !Join ['',[!Ref userPoolName, '-', !Ref env]]]
       
-      UsernameAttributes:
-        - 'email'      
+      
       Schema:
         
         -
           Name: email
           Required: true
           Mutable: true
- 
+        
+      
+      
+      
       AutoVerifiedAttributes: !Ref autoVerifiedAttributes
-
+      
+      
       EmailVerificationMessage: !Ref emailVerificationMessage
       EmailVerificationSubject: !Ref emailVerificationSubject
       

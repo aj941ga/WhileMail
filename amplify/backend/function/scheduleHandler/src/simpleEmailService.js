@@ -11,7 +11,7 @@ const { AWS } = require('./libs/Client');
 */
 function sendMail(options) {
 
-    const { to, cc, subject, body } = options;
+    const { from, to, cc, subject, body } = options;
     // Create sendEmail params 
     const params = {
         Destination: { /* required */
@@ -22,7 +22,7 @@ function sendMail(options) {
             Body: { /* required */
                 Html: {
                     Charset: "UTF-8",
-                    Data: body
+                    Data: body + `<hr/> mail sent by ${from} using whilemail`
                 },
                 Text: {
                     Charset: "UTF-8",

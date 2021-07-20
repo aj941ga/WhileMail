@@ -45,6 +45,10 @@ const mailSchema = new dynamoose.Schema({
         required: true,
         default: Date.now()
     },
+    recur: {
+        type: String,
+        required: true
+    }
 }, {
     saveUnknown: true
 });
@@ -60,6 +64,7 @@ function validateMail(mail) {
         subject: Joi.string().required(),
         body: Joi.string().required(),
         cronExpression: Joi.string().required(),
+        recur: Joi.string().required(),
     });
 
     return schema.validate(mail);
