@@ -11,8 +11,8 @@ A fullstack serverless application for sending recurring emails. Uses Amazon API
 ![WhileMail mobile view](public/images/whilemail-mobile-view.png)
 
 ## Application Demo
-Note: Simple Email Service is currently in sandbox mode so mailing features are restricted to only aws console verified email-addresses.
-[WhileMail](https://master.d9tkb3cq8bnpc.amplifyapp.com/)
+ Note: Simple Email Service is currently in sandbox mode so mailing features are restricted to only aws console verified email-addresses.
+#### [WhileMail Link](https://master.d9tkb3cq8bnpc.amplifyapp.com/)
 
 ## Deploy with the AWS Amplify Console
 
